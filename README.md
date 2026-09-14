@@ -17,16 +17,13 @@ choosing and editing takes, and doing an optional first read. They use a
 fictional demo manuscript, and all private writing and reference voice material
 stays outside the repository.
 
-I started this project because I just got tired of juggling text, audio files,
-and generation settings. One take would sound right, the next paragraph
-wouldn't, and changing a pause or comparing two seeds meant going through the
-same mess again.
-
-So I built TTS Directors Room, a local performance editor for
+I built TTS Directors Room because I was matching manuscript passages to WAV
+files and tracking which Higgs settings produced each take by hand. It's a local
+performance editor for
 [Higgs TTS 3](https://github.com/boson-ai/higgs-audio) that keeps the manuscript,
-speaker strips, generated takes, waveforms, and direction controls in one
-place. I can work through the text one region at a time, try several
-performances, and choose the take I want in the finished reading.
+speaker strips, generated takes, waveforms, and direction controls in one place,
+so I can work through the text one region at a time, try several performances,
+and choose the one I want in the finished reading.
 
 I've set it up so every take keeps what I used to generate it: the text,
 reference voice, delivery tokens, sampling settings, seed, the endpoint's model
