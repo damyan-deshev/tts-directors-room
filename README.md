@@ -12,27 +12,26 @@
   <img src="docs/screenshots/first-read.png" width="80%" alt="Optional first-read workflow with voice audition and time estimate">
 </p>
 
-These are three working views of the application, covering speaker and
-manuscript arrangement, take selection and audio editing, and the optional
-first-read workflow. The screenshots use a fictional demo manuscript, and all
-private writing and reference voice material stays outside the repository.
+The screenshots show the app as it works today: arranging speakers and text,
+choosing and editing takes, and doing an optional first read. They use a
+fictional demo manuscript, and all private writing and reference voice material
+stays outside the repository.
 
-I started this project because I was tired of a very specific nuisance: a take
-could sound perfect, yet regenerating the next paragraph, adjusting a pause, or
-comparing two seeds still meant juggling text, audio files, and generation
-settings by hand.
+I started this project because I just got tired of juggling text, audio files,
+and generation settings. One take would sound right, the next paragraph
+wouldn't, and changing a pause or comparing two seeds meant going through the
+same mess again.
 
-TTS Directors Room is the local editor I built for that work with
-[Higgs TTS 3](https://github.com/boson-ai/higgs-audio). I can edit the
-manuscript, direct one region at a time, generate several performances, and
-choose which take belongs in the finished reading. Speaker strips, manuscript
-regions, waveforms, and Higgs controls share the same screen because I want the
-text and its performance to stay together throughout the edit.
+So I built TTS Directors Room, a local performance editor for
+[Higgs TTS 3](https://github.com/boson-ai/higgs-audio) that keeps the manuscript,
+speaker strips, generated takes, waveforms, and direction controls in one
+place. I can work through the text one region at a time, try several
+performances, and choose the take I want in the finished reading.
 
-Every take carries the transaction that created it: the text and canonical
-reference voice, the delivery tokens and sampling parameters, the seed, the
-endpoint's model and build report, and the output hash. When I approve a take, I
-am making one narrow claim: I listened to that performance and accepted it.
+I've set it up so every take keeps what I used to generate it: the text,
+reference voice, delivery tokens, sampling settings, seed, the endpoint's model
+and build report, and the output hash. I use approval to mean that I've listened
+to a take and want to keep it.
 
 The first launch opens in English; Bulgarian is one click away, and the editor
 remembers that choice locally.
@@ -45,13 +44,13 @@ remembers that choice locally.
 Generate -> Audition -> Activate -> Render -> Export
 ```
 
-- Use **Generate** to create an immutable take, while the current take stays
-  active until you choose a replacement.
-- **Audition** plays takes raw, with their edits, or between the neighboring
-  seams, which makes both A/B comparison and continuity checks possible.
-- Activating a take places it in the edit decision list. **Approve** separately
-  records that you heard and accepted the performance, even if its source or
-  context later changes.
+- **Generate** gives me a new immutable take, while the current one stays active
+  until I choose a replacement.
+- **Audition** lets me compare raw takes, hear their edits, or play a take with
+  its neighboring seams when I need to check continuity.
+- When I activate a take, it enters the edit decision list; **Approve** records
+  that I've heard it and want to keep it, even if its source or context later
+  changes.
 - During **Render**, the editor applies trims, fades, gain, automation, and
   pauses to the active EDL through deterministic audio processing, leaving
   Higgs idle.
@@ -63,34 +62,33 @@ Generate -> Audition -> Activate -> Render -> Export
 also changes the supported sampling parameters and records those changes with
 the resulting take.
 
-During generation, Higgs receives the selected canonical voice reference. The
-editor reserves neighboring generated takes for audition and excludes them from
-conditioning, because feeding one synthetic performance into the next
-gradually compounds changes in voice and prosody across a long work.
+When I generate a take, I send Higgs the selected canonical voice reference. I
+keep neighboring generated takes around for audition and out of the conditioning
+input, because feeding one synthetic performance into the next gradually
+changes the voice and prosody across a long work.
 
 ## What works today
 
-- The timeline is source-locked, which means every speaker strip lines up with
-  its waveform while the regions continue to follow the manuscript's narrative
-  order.
-- Select a passage in the editable manuscript and you can add Higgs emotion,
-  style, or prosody tokens exactly where the performance needs them.
-- Each take has a real waveform with a playhead and zoom. Its own trim points,
-  fades, clip gain, volume envelope, and internal pauses remain editable around
-  the original generated audio.
+- I keep the timeline source-locked, so every speaker strip lines up with its
+  waveform and the regions continue to follow the manuscript's narrative order.
+- I can select a passage in the manuscript and add Higgs emotion, style, or
+  prosody tokens where I want the delivery to change.
+- Each take gives me a real waveform with a playhead and zoom, plus trim points,
+  fades, clip gain, volume automation, and internal pauses that I can edit around
+  the original audio.
 - Pauses between regions are explicit, and speaker tracks have independent
   output gain. Raw A/B, edited playback, and contextual audition all remain
   available in the same workspace.
-- Optional speaker-similarity and ASR checks sit beside the approval controls,
-  where their evidence informs a listening decision and the listener retains
-  responsibility for approval.
+- I've put the optional speaker-similarity and ASR checks beside the approval
+  controls, where I can use their evidence and still make the listening decision
+  myself.
 - Undo and Redo survive a restart, EDL renders are cached, and each export
   becomes an immutable revision.
 - I usually begin with **First read**, which can generate the whole manuscript
   with a chosen voice and shows a rough time estimate before it starts. Hearing
   one complete performance tells me where detailed direction is worthwhile.
-- Switching to another Higgs endpoint leaves the project intact, and a model
-  that is already running remains loaded after generation.
+- I can switch to another Higgs endpoint without rebuilding the project, and I
+  leave an already running model loaded after generation.
 
 For V1, I've left AI-assisted speaker attribution, rechunking, free movement of
 regions, crossfades, and plugin chains for later work. I keep the current
@@ -132,8 +130,8 @@ to replace a local project unless `--force` is supplied explicitly.
 
 ### Reference voices
 
-Reference voices are registered in `voices.local.json`, which remains local and
-is excluded from Git:
+I keep reference voices in `voices.local.json`, which stays local and out of
+Git:
 
 ```json
 {
@@ -171,11 +169,11 @@ browser
        -> configured HIGGS_ENDPOINT
 ```
 
-Open a take later and you can see exactly what created it: the generation
-request, reference fingerprints, endpoint, reported model and build, seed, and
-output hash. The same record holds its QA results, approval and notes, and every
-non-destructive edit made afterward. Missing build information is stored
-literally as `unreported`.
+When I open a take later, I can see the request, reference fingerprints,
+endpoint, reported model and build, seed, and output hash that produced it. The
+same record holds its QA results, approval and notes, and every non-destructive
+edit made afterward. If the endpoint omits its build information, I store it as
+`unreported`.
 
 I keep the following local material outside Git:
 
@@ -192,9 +190,9 @@ config.local.json
 voices.local.json
 ```
 
-Browser responses contain a display label, an allowlisted audition URL, and
-SHA-256 fingerprints for each reference. File paths and transcripts stay in the
-local voice registry, where the browser cannot expose them.
+I give the browser a display label, an allowlisted audition URL, and SHA-256
+fingerprints for each reference. The file paths and transcripts stay in the
+local voice registry.
 
 ## Verification
 
