@@ -14,25 +14,28 @@
 
 These are three working views of the application, covering speaker and
 manuscript arrangement, take selection and audio editing, and the optional
-first-read workflow. The screenshots use a fictional demo manuscript, so no
-private writing or reference voice appears in this repository.
+first-read workflow. The screenshots use a fictional demo manuscript, and all
+private writing and reference voice material stays outside the repository.
 
-> An audiobook needs direction; pressing Generate insistently and hoping the
-> seventeenth seed will understand the hint is rarely enough.
+I started this project because I was tired of a very specific nuisance: a take
+could sound perfect, yet regenerating the next paragraph, adjusting a pause, or
+comparing two seeds still meant juggling text, audio files, and generation
+settings by hand.
 
-TTS Directors Room is a local non-linear performance editor for
-[Higgs TTS 3](https://github.com/boson-ai/higgs-audio), built around a manuscript
-that remains the source of truth while every region acquires its own immutable
-takes, active performance, human judgment, and non-destructive audio edits.
+TTS Directors Room is the local editor I built for that work with
+[Higgs TTS 3](https://github.com/boson-ai/higgs-audio). I can edit the
+manuscript, direct one region at a time, generate several performances, and
+choose which take belongs in the finished reading. Speaker strips, manuscript
+regions, waveforms, and Higgs controls share the same screen because I want the
+text and its performance to stay together throughout the edit.
 
-The interface borrows the useful spatial language of a DAW while remaining
-specific to spoken-word generation with Higgs. For every take, it records the
-actual generation transaction, including the text, canonical reference voice,
-delivery tokens, sampling parameters, seed, endpoint and model observations,
-build information, and output hash.
+Every take carries the transaction that created it: the text and canonical
+reference voice, the delivery tokens and sampling parameters, the seed, the
+endpoint's model and build report, and the output hash. When I approve a take, I
+am making one narrow claim: I listened to that performance and accepted it.
 
-English is the default interface language on first launch, while Bulgarian can
-be selected with one click and the preference is then stored locally.
+The first launch opens in English; Bulgarian is one click away, and the editor
+remembers that choice locally.
 
 ---
 
@@ -42,60 +45,63 @@ be selected with one click and the preference is then stored locally.
 Generate -> Audition -> Activate -> Render -> Export
 ```
 
-- **Generate** creates a new immutable take and leaves the current active take
-  unchanged, so a new performance never silently enters the edit.
-- **Audition** provides raw A/B comparison as well as edited and contextual
-  playback, allowing each take to be judged both on its own and at its seams.
-- **Activate** places the chosen performance in the edit decision list, while
-  **Approve** records the separate human judgment that the take has been heard
-  and accepted; approval therefore remains independent of freshness.
-- **Render** assembles the active EDL with trims, fades, gain, automation, and
-  pauses, using deterministic audio processing without calling Higgs again.
-- **Export** turns an existing render into an immutable WAV, MP3, and manifest
-  revision that can be traced back to its complete set of decisions.
+- Use **Generate** to create an immutable take, while the current take stays
+  active until you choose a replacement.
+- **Audition** plays takes raw, with their edits, or between the neighboring
+  seams, which makes both A/B comparison and continuity checks possible.
+- Activating a take places it in the edit decision list. **Approve** separately
+  records that you heard and accepted the performance, even if its source or
+  context later changes.
+- During **Render**, the editor applies trims, fades, gain, automation, and
+  pauses to the active EDL through deterministic audio processing, leaving
+  Higgs idle.
+- **Export** writes an immutable WAV, MP3, and manifest revision from the
+  existing render, preserving the decisions behind the finished file.
 
-The take controls preserve three genuinely different intentions. `Retry exact`
-repeats the recorded request with its original seed, `New performance` retains
-the direction while choosing a new seed, and `Variation` records a small change
-to supported sampling parameters.
+`Retry exact` repeats the recorded request with its original seed, whereas
+`New performance` keeps the direction and chooses a fresh seed; `Variation`
+also changes the supported sampling parameters and records those changes with
+the resulting take.
 
-During generation, Higgs receives only the selected canonical voice reference.
-Neighboring generated takes remain available as audition context, but never
-become conditioning audio, because feeding one synthetic performance into the
-next gradually compounds changes in voice and prosody across a long work.
+During generation, Higgs receives the selected canonical voice reference. The
+editor reserves neighboring generated takes for audition and excludes them from
+conditioning, because feeding one synthetic performance into the next
+gradually compounds changes in voice and prosody across a long work.
 
 ## What works today
 
-- A source-locked timeline aligns every speaker channel strip vertically with
-  its waveform lane, while preserving the narrative order of the manuscript.
-- The manuscript remains editable and supports inline Higgs emotion, style,
-  and prosody tokens at the precise spans where their direction is needed.
-- Every take has a real waveform, playhead, zoom, trim points, fade-in and
-  fade-out, clip gain, volume automation, and internal pauses.
-- Region boundaries carry explicit pauses, and each speaker track has its own
-  output gain without introducing invisible changes to the underlying take.
-- Raw immutable A/B comparison, edited audition, and contextual audition are
-  available from the same workspace.
-- Speaker similarity and ASR checks appear as visible, optional approval gates,
-  keeping automated evidence close to the human listening decision.
-- Persistent Undo and Redo, cached EDL renders, and immutable export revisions
-  preserve both experimentation and reproducibility.
-- A quiet, optional **First read** workflow lets a voice be chosen and the
-  entire manuscript generated with a rough time estimate before detailed
-  direction begins.
-- The Higgs endpoint is independently configurable, and the UI server leaves a
-  running model loaded after generation.
+- The timeline is source-locked, which means every speaker strip lines up with
+  its waveform while the regions continue to follow the manuscript's narrative
+  order.
+- Select a passage in the editable manuscript and you can add Higgs emotion,
+  style, or prosody tokens exactly where the performance needs them.
+- Each take has a real waveform with a playhead and zoom. Its own trim points,
+  fades, clip gain, volume envelope, and internal pauses remain editable around
+  the original generated audio.
+- Pauses between regions are explicit, and speaker tracks have independent
+  output gain. Raw A/B, edited playback, and contextual audition all remain
+  available in the same workspace.
+- Optional speaker-similarity and ASR checks sit beside the approval controls,
+  where their evidence informs a listening decision and the listener retains
+  responsibility for approval.
+- Undo and Redo survive a restart, EDL renders are cached, and each export
+  becomes an immutable revision.
+- I usually begin with **First read**, which can generate the whole manuscript
+  with a chosen voice and shows a rough time estimate before it starts. Hearing
+  one complete performance tells me where detailed direction is worthwhile.
+- Switching to another Higgs endpoint leaves the project intact, and a model
+  that is already running remains loaded after generation.
 
-AI-assisted speaker attribution, rechunking, free movement of regions,
-crossfades, and plugin chains remain future concerns rather than hidden V1
-promises. The current product contract and the reasoning behind its boundaries
-live in [`docs/product-ledger.md`](docs/product-ledger.md).
+For V1, I've left AI-assisted speaker attribution, rechunking, free movement of
+regions, crossfades, and plugin chains for later work. I keep the current
+product contract, including the reasoning behind those boundaries, in
+[`docs/product-ledger.md`](docs/product-ledger.md).
 
 ## Quick start
 
 The application requires Python 3.11 or newer, `ffmpeg` for rendering and
-export, and a running Higgs endpoint. Its main UI and API server use only the
-Python standard library, while the similarity and ASR runtimes are loaded lazily
+export, and a running Higgs endpoint. The main UI and API server run on the
+Python standard library, with the similarity and ASR runtimes loading lazily
 when their respective gates are requested.
 
 ```bash
@@ -162,16 +168,16 @@ browser
        -> versioned project + persistent command history
        -> immutable takes + QA evaluations
        -> deterministic render/export pipeline
-       -> concrete HIGGS_ENDPOINT
+       -> configured HIGGS_ENDPOINT
 ```
 
-Each take retains its exact request, canonical-reference fingerprints,
-endpoint, model and build observations, seed, output hash, QA results, approval
-and notes, and non-destructive edits. Whenever an endpoint omits its build
-information, the value is recorded as `unreported` rather than inferred.
+Open a take later and you can see exactly what created it: the generation
+request, reference fingerprints, endpoint, reported model and build, seed, and
+output hash. The same record holds its QA results, approval and notes, and every
+non-destructive edit made afterward. Missing build information is stored
+literally as `unreported`.
 
-The following directories and files contain local material and are ignored by
-Git:
+I keep the following local material outside Git:
 
 ```text
 data/             manuscript and project state
@@ -186,10 +192,9 @@ config.local.json
 voices.local.json
 ```
 
-Reference file paths and transcripts are withheld from browser responses. The
-interface receives the display label, an allowlisted audition URL, and SHA-256
-fingerprints, which is enough for direction and provenance without exposing the
-local voice registry.
+Browser responses contain a display label, an allowlisted audition URL, and
+SHA-256 fingerprints for each reference. File paths and transcripts stay in the
+local voice registry, where the browser cannot expose them.
 
 ## Verification
 
@@ -215,11 +220,10 @@ TTS Directors Room is an independent project whose support for “Higgs TTS 3”
 and “Higgs Audio” is described by name for clarity. The project has no
 affiliation with, sponsorship from, or endorsement by Boson AI.
 
-The repository is public so the work can be inspected, although its code
-remains source-available with all rights reserved; publication alone grants no
-permission for copying or commercial use. The full terms are in
-[`LICENSE`](LICENSE).
+I've made the repository public so people can inspect the work. I retain all
+rights to the source-available code, and [`LICENSE`](LICENSE) contains the terms
+that govern copying and commercial use.
 
 The Higgs model and its code are distributed separately under their respective
-terms and are not included here. Relevant attribution and links are collected
-in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+terms. Relevant attribution and links are collected in
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
