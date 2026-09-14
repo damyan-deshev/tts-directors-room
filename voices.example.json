@@ -1,0 +1,8 @@
+{
+  "canonical_narrator": {
+    "label": "Canonical narrator",
+    "description": "Immutable reference used for every generation on this track.",
+    "audio": "/absolute/path/to/reference.wav",
+    "transcript": "/absolute/path/to/reference.txt"
+  }
+}

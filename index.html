@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TTS Directors Room</title>
+  <link rel="stylesheet" href="/static/styles.css?v=20260915-v5">
+</head>
+<body>
+  <main class="app">
+    <header class="transport">
+      <div class="brand"><span class="mark">✦</span><div><h1 id="projectTitle">TTS Directors Room</h1><p data-i18n="app.tagline">non-linear performance editor for Higgs</p></div></div>
+      <div class="transport-controls">
+        <button class="icon-button" id="previousRegion" data-i18n-title="nav.previous" title="Previous region">◀</button><button class="transport-play" id="playActive">▶</button><button class="icon-button" id="nextRegion" data-i18n-title="nav.next" title="Next region">▶</button>
+        <div class="scope"><button class="active" data-i18n="transport.chunk">Region</button><button id="playSelection" data-i18n="transport.selection">Selection</button><button id="playStory" data-i18n="transport.story">Full story</button></div>
+      </div>
+      <div class="engine-state"><span class="dot" id="engineDot"></span><div><strong id="engineLabel">Higgs</strong><small id="engineEndpoint" data-i18n="engine.checking">checking endpoint…</small></div></div>
+      <div class="locale-switch" role="group" data-i18n-aria="locale.switch" aria-label="Interface language"><button type="button" data-locale="en" data-i18n-title="locale.english" title="Use English" aria-pressed="true">EN</button><button type="button" data-locale="bg" data-i18n-title="locale.bulgarian" title="Use Bulgarian" aria-pressed="false">БГ</button></div>
+      <button class="export-button" id="exportRender" data-i18n="export.action">Export</button>
+    </header>
+
+    <section class="state-bar" aria-label="Project state and history">
+      <div class="history-controls">
+        <button id="undoProject" data-i18n-title="history.undo.none" title="Nothing to undo" disabled>↶ Undo</button>
+        <button id="redoProject" data-i18n-title="history.redo.none" title="Nothing to redo" disabled>↷ Redo</button>
+      </div>
+      <div class="workflow-signals" aria-live="polite">
+        <span id="generateSignal" class="workflow-signal">Generate required · 0</span>
+        <span id="qaSignal" class="workflow-signal">Run QA · 0</span>
+        <span id="renderSignal" class="workflow-signal">Render current</span>
+      </div>
+      <button id="baselineEntry" class="baseline-entry" hidden>First read…</button>
+      <span id="stateWarning" class="state-warning" hidden></span>
+      <span id="operationStatus" class="operation-status" hidden></span>
+      <span id="historyDepth" class="history-depth">history 0/0</span>
+    </section>
+
+    <section class="workspace">
+      <section class="stage">
+        <section class="arrange">
+          <div class="stage-head"><div><span class="eyebrow" data-i18n="arrange.eyebrow">ARRANGE · SOURCE ORDER LOCKED</span><h2 data-i18n="arrange.title">Performance order</h2></div><div class="arrange-tools"><label><span data-i18n="arrange.zoom">Zoom</span> <input id="timelineZoom" type="range" min="55" max="180" value="90"></label><div class="summary" id="summary"></div></div></div>
+          <div id="monitorBanner" class="monitor-banner" hidden><strong data-i18n="monitor.mode">AUDITION MODE</strong><span id="monitorSummary"></span><button id="clearMonitoring" data-i18n="monitor.clear">Clear M/S</button><small data-i18n="monitor.render.note">Render always includes every track.</small></div>
+          <div id="trackStackScroll" class="track-stack-scroll"><div id="trackStack" class="track-stack"></div></div>
+        </section>
+
+        <section class="performance">
+          <div class="stage-head compact"><div><span class="eyebrow" data-i18n="performance.eyebrow">PERFORMANCE EDITOR</span><h2 id="regionTitle" data-i18n="performance.region">Region —</h2></div><div class="region-state" id="regionState"></div></div>
+          <div class="manuscript-shell"><div id="editor" class="manuscript" contenteditable="plaintext-only" spellcheck="true" role="textbox" data-i18n-aria="editor.aria" aria-label="Higgs manuscript"></div></div>
+          <div class="selection-bar"><span class="selection-location"><b id="activeRegionCue">—</b><span id="selectionMeta" data-i18n="selection.place">Place the cursor in the manuscript</span></span><button id="toggleRaw" data-i18n="tags.clear">Tags: clear</button><span id="saveState" data-i18n="save.local">local autosave</span></div>
+        </section>
+
+        <section class="takes-panel">
+          <div class="stage-head compact"><div><span class="eyebrow" data-i18n="takes.eyebrow">TAKES</span><h2 id="takesTitle" data-i18n="takes.title">Performances</h2></div><div class="generation-actions"><button id="retryExact" data-i18n="generate.retry" data-i18n-title="generate.retry.title" title="The same exact Higgs request and seed">↻ Retry exact</button><button id="newPerformance" class="primary" data-i18n="generate.new">＋ New performance</button><button id="variation" data-i18n="generate.variation">⌁ Variation</button></div></div>
+          <section id="abCompare" class="ab-compare" aria-label="Raw immutable take comparison">
+            <div><span class="eyebrow" data-i18n="ab.eyebrow">RAW IMMUTABLE A/B</span><strong id="abSummary" data-i18n="ab.choose">Choose A and B</strong><small data-i18n="ab.note">original Higgs level · all deterministic edits bypassed</small></div>
+            <div class="ab-slots"><button id="abA">A · —</button><button id="abB">B · —</button><button id="abToggle">A/B</button><button id="abContext" data-i18n="ab.context">In context</button></div>
+            <audio id="abAudio" controls preload="metadata"></audio>
+          </section>
+          <div id="takes" class="takes"></div>
+        </section>
+      </section>
+
+      <aside class="inspector"><div class="inspector-scroll">
+        <section class="inspector-card">
+          <span class="eyebrow" data-i18n="region.eyebrow">REGION</span><h2 id="inspectorRegion">—</h2>
+          <label><span data-i18n="region.track">Voice track</span><select id="regionTrack"></select></label><label><span data-i18n="region.reference">Reference override</span><select id="regionVoice"></select></label>
+          <button class="listen-button" id="listenReference" data-i18n="reference.listen">▶ Audition reference</button><button class="listen-button seam" id="auditionContext" data-i18n="reference.seams">◉ Reference → seams</button>
+          <p class="microcopy" data-i18n="reference.note">Reference audition plays a short sequence: reference, previous active take, current take, and next active take.</p>
+        </section>
+
+        <section class="inspector-card">
+          <span class="eyebrow" data-i18n="context.eyebrow">CONTINUITY CONTEXT · NOT CONDITIONING</span><div class="two-columns"><label><span data-i18n="context.previous">Previous</span><select id="contextPrevious"><option>0</option><option selected>1</option><option>2</option><option>3</option></select></label><label><span data-i18n="context.next">Next</span><select id="contextNext"><option>0</option><option selected>1</option><option>2</option><option>3</option></select></label></div>
+          <div id="contextPreview" class="context-preview"></div><div id="contextCapability" class="capability-warning"></div>
+        </section>
+
+        <section class="inspector-card">
+          <span class="eyebrow" data-i18n="delivery.eyebrow">DELIVERY · HIGGS TOKENS</span><p class="microcopy" data-i18n="delivery.note">Discrete native tokens, not pretend synthesizer sliders.</p>
+          <div class="two-columns"><label><span data-i18n="delivery.emotion">Emotion</span><select id="emotion"></select></label><label><span data-i18n="delivery.style">Style</span><select id="style"></select></label><label><span data-i18n="delivery.speed">Speed</span><select id="speed"></select></label><label><span data-i18n="delivery.pitch">Pitch</span><select id="pitch"></select></label></div><label><span data-i18n="delivery.expressiveness">Expressiveness</span><select id="expressiveness"></select></label>
+          <div class="inline-tags"><strong data-i18n="inline.title">Inline Higgs direction</strong><p class="microcopy" data-i18n="inline.note">The tag is inserted exactly before the cursor or selection. A selection may not cross region boundaries.</p><div id="quickTags" class="quick-tags"></div><button id="removeInlineTag" class="remove-inline-tag" data-i18n="inline.remove">Remove tag at cursor / selection</button></div>
+        </section>
+
+        <section class="inspector-card">
+          <span class="eyebrow" data-i18n="sampling.eyebrow">SAMPLING · REAL PARAMETERS</span><div class="two-columns"><label><span data-i18n="sampling.temperature">Temperature</span><input id="temperature" type="number" min="0.1" max="2" step="0.05"></label><label><span data-i18n="sampling.topk">Top K</span><input id="topK" type="number" min="1" max="200"></label><label><span data-i18n="sampling.seed">Baseline seed</span><input id="seed" type="number" min="0" max="2147483647"></label><label><span data-i18n="sampling.frames">Max frames</span><input id="maxTokens" type="number" min="256" max="4096" step="64"></label></div>
+        </section>
+
+        <section class="inspector-card">
+          <span class="eyebrow" data-i18n="edit.eyebrow">EDIT DECISION</span><label><span data-i18n="edit.pause.after">Pause after region</span> <span id="pauseValue"></span><input id="pauseAfter" type="range" min="0" max="3000" step="50"></label><p class="microcopy" data-i18n="edit.pause.note">An edit pause between active takes. It does not regenerate Higgs.</p>
+          <div class="edit-grid"><label><span data-i18n="edit.trim.start">Trim start ms</span><input id="trimStart" type="number" min="0" step="10"></label><label><span data-i18n="edit.trim.end">Trim end ms</span><input id="trimEnd" type="number" min="0" step="10"></label><label><span data-i18n="edit.fade.in">Fade in ms</span><input id="fadeIn" type="number" min="0" step="10"></label><label><span data-i18n="edit.fade.out">Fade out ms</span><input id="fadeOut" type="number" min="0" step="10"></label><label><span data-i18n="edit.clip.gain">Clip gain dB</span><input id="clipGain" type="number" min="-60" max="12" step="0.5"></label><label><span data-i18n="edit.playhead">Playhead ms</span><input id="editPlayhead" type="number" min="0" step="10" value="0"></label></div>
+          <div class="edit-actions"><button id="listenRaw" data-i18n="edit.raw">Raw</button><button id="listenEdited" data-i18n="edit.edited">Edited</button><button id="addPause" data-i18n="edit.pause.add">+ 0.5s pause</button><button id="addEnvelope" data-i18n="edit.gain.add">+ gain point</button><button id="clearAutomation" data-i18n="edit.automation.clear">Clear automation</button></div>
+          <div id="editSummary" class="microcopy"></div>
+          <div id="automationPoints" class="automation-points" aria-label="Automation points on the immutable source timeline"></div>
+          <button class="render-button" id="renderStory" data-i18n="render.action">Render active EDL</button><audio id="renderAudio" controls hidden></audio><div id="renderMeta" class="microcopy"></div>
+          <div id="exportHistory" class="export-history"></div>
+        </section>
+
+        <section class="inspector-card">
+          <span class="eyebrow" data-i18n="qa.eyebrow">QA GATES · AFTER GENERATION</span>
+          <label class="toggle-label"><input id="speakerGate" type="checkbox"> <span data-i18n="qa.speaker">Speaker similarity</span></label><label class="toggle-label"><input id="asrGate" type="checkbox"> <span data-i18n="qa.asr">ASR content</span></label>
+          <button class="listen-button" id="runQA" data-i18n="qa.run">Run / recheck selected take</button><div id="qaMeta" class="microcopy"></div>
+        </section>
+
+        <details class="inspector-card diagnostics"><summary data-i18n="diagnostics.summary">Transaction / diagnostics</summary><pre id="diagnostics" data-i18n="diagnostics.empty">Choose a take.</pre></details>
+      </div></aside>
+    </section>
+  </main>
+  <dialog id="baselineDialog" class="baseline-dialog">
+    <div class="baseline-dialog-head"><div><span class="eyebrow" data-i18n="baseline.eyebrow">OPTIONAL START</span><h2 data-i18n="baseline.title">Render a first read</h2></div><button id="closeBaseline" class="dialog-close" data-i18n-aria="dialog.close" aria-label="Close">×</button></div>
+    <p class="baseline-intro" data-i18n="baseline.intro">A gentle suggestion, not a required workflow: choose one common voice and hear the work from beginning to end. Then direct only the places that actually need it.</p>
+    <label><span data-i18n="baseline.voice">Common reference voice</span><select id="baselineVoice"></select></label>
+    <button id="listenBaselineReference" class="listen-button" data-i18n="baseline.listen">▶ Audition reference</button>
+    <div id="baselinePlan" class="baseline-plan"></div>
+    <div id="baselineJob" class="baseline-job" hidden></div>
+    <p class="microcopy" data-i18n="baseline.note">The choice changes track defaults; existing region overrides and active takes stay untouched. New takes are Fresh, but not Approved.</p>
+    <div class="dialog-actions"><button id="dismissBaseline" data-i18n="baseline.dismiss">Not now</button><button id="cancelBaseline" class="danger" data-i18n="baseline.cancel" hidden>Stop after current region</button><button id="startBaseline" class="primary" data-i18n="baseline.start">Start first read</button></div>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div><script src="/static/i18n.js?v=20260915-v5"></script><script src="/static/app.js?v=20260915-v5"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local stories, private voice material, generated takes, renders, and logs.
+data/
+voices/
+preview-audio/
+takes/
+renders/
+waveforms/
+exports/
+logs/
+work/
+*.pre-lab.*
+
+# Local endpoint and operator overrides.
+.env
+config.local.json
+voices.local.json
